@@ -1,5 +1,7 @@
 package net.overscale.juc;
 
+import static net.overscale.juc.Utils.*;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -21,29 +23,71 @@ public class Main {
 			} else if (f.getAnnotation(FuzzyEquals.class) != null) {
 				res &= checkFuzzyEquals(src, trg, f, sync);
 			} else if (f.getAnnotation(ArrayEquals.class) != null) {
-				res &= checkArrayEquals(src, trg, f, sync);
+				if (f.get(src) instanceof double[]) {
+					double[] srcVal = (double[]) f.get(src);
+					double[] trgVal = (double[]) f.get(trg);
+					
+					res &= checkArrayEquals(src, trg, srcVal, trgVal, f, sync);
+				} else {
+					Object[] srcVal = (Object[]) f.get(src);
+					Object[] trgVal = (Object[]) f.get(trg);
+					
+					res &= checkArrayEquals(src, trg, srcVal, trgVal, f, sync);
+				}
 			}
 		}
+
 		return res;
 	}
 
-	private boolean checkArrayEquals(Object src, Object trg, Field f,
-			boolean sync) throws IllegalAccessException {
-		Object[] srcFieldVal = (Object[]) f.get(src);
-		Object[] trgFieldVal = (Object[]) f.get(trg);
-
+	// TODO fuzzy double/float arrays eq
+	private boolean checkArrayEquals(Object src, Object trg, double[] srcVal,
+			double[] trgVal, Field f, boolean sync)
+			throws IllegalArgumentException, IllegalAccessException {
 		ArrayEquals ae = (ArrayEquals) f.getAnnotation(ArrayEquals.class);
-		if (!PsTools.areArraysNullsOrEqualsIgnoreOrder(srcFieldVal,
-				trgFieldVal, ae.ignoreDuplicate())) {
+		if (!Arrays.equals(srcVal, trgVal)) {
 			if (sync) {
-				f.set(trg, srcFieldVal);
+				if (ae.deepCopy()) {
+					throw new IllegalStateException(
+							"Deep copy not yet implemented.");
+				} else {
+					f.set(trg, srcVal);
+				}
+
 				System.out.println(String.format(
 						"%s was updated. Old value: %s, new value: %s",
-						new Object[] { f, Arrays.toString(trgFieldVal),
-								Arrays.toString(srcFieldVal) }));
+						new Object[] { f, Arrays.toString(trgVal),
+								Arrays.toString(srcVal) }));
 			}
+
 			return false;
 		}
+
+		return true;
+	}
+
+	private boolean checkArrayEquals(Object src, Object trg, Object[] srcVal,
+			Object[] trgVal, Field f, boolean sync)
+			throws IllegalAccessException {
+		ArrayEquals ae = (ArrayEquals) f.getAnnotation(ArrayEquals.class);
+		if (!Arrays.equals(srcVal, trgVal)) {
+			if (sync) {
+				if (ae.deepCopy()) {
+					throw new IllegalStateException(
+							"Deep copy not yet implemented.");
+				} else {
+					f.set(trg, srcVal);
+				}
+
+				System.out.println(String.format(
+						"%s was updated. Old value: %s, new value: %s",
+						new Object[] { f, Arrays.toString(trgVal),
+								Arrays.toString(srcVal) }));
+			}
+
+			return false;
+		}
+
 		return true;
 	}
 
@@ -51,15 +95,26 @@ public class Main {
 			boolean sync) throws IllegalAccessException {
 		Object srcFieldVal = f.get(src);
 		Object trgFieldVal = f.get(trg);
+
+		StrictlyEquals se = (StrictlyEquals) f
+				.getAnnotation(StrictlyEquals.class);
 		if (!areStriclyEquals(srcFieldVal, trgFieldVal)) {
 			if (sync) {
-				f.set(trg, srcFieldVal);
+				if (se.deepCopy()) {
+					throw new IllegalStateException(
+							"Deep copy not yet implemented.");
+				} else {
+					f.set(trg, srcFieldVal);
+				}
+
 				System.out.println(String.format(
 						"%s was updated. Old value: %s, new value: %s",
 						new Object[] { f, trgFieldVal, srcFieldVal }));
 			}
+
 			return false;
 		}
+
 		return true;
 	}
 
@@ -70,6 +125,7 @@ public class Main {
 		if ((srcFieldVal instanceof Integer)) {
 			return ((Integer) srcFieldVal).equals(trgFieldVal);
 		}
+
 		throw new IllegalStateException("Not yet implemented!");
 	}
 
@@ -79,7 +135,7 @@ public class Main {
 		Object trgFieldVal = f.get(trg);
 
 		FuzzyEquals fe = (FuzzyEquals) f.getAnnotation(FuzzyEquals.class);
-		if (!areFuzzyEquals(srcFieldVal, trgFieldVal, fe.tollerance())) {
+		if (!areFuzzyEquals(srcFieldVal, trgFieldVal, fe.tolerance())) {
 			if (sync) {
 				f.set(trg, srcFieldVal);
 				System.out.println(String.format(
@@ -97,8 +153,10 @@ public class Main {
 			double srcDoub = ((Double) srcFieldVal).doubleValue();
 			double trgDoub = ((Double) trgFieldVal).doubleValue();
 
-			return PsTools.fuzzyEquals(srcDoub, trgDoub, tolerance);
+			return fuzzyEquals(srcDoub, trgDoub, tolerance);
 		}
+
 		throw new IllegalStateException("Not yet implemented!");
 	}
+
 }

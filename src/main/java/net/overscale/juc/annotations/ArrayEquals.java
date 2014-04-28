@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 @Target({ java.lang.annotation.ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ArrayEquals {
-	boolean ignoreDuplicate();
+
+	boolean deepCopy();
 }

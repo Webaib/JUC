@@ -1,59 +1,60 @@
 package net.overscale.juc;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import net.overscale.juc.annotations.ArrayEquals;
-import net.overscale.juc.annotations.FuzzyEquals;
-import net.overscale.juc.annotations.StrictlyEquals;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class MainTest {
-	@StrictlyEquals
-	private int intF;
-	@StrictlyEquals
-	private String stringF;
-	@FuzzyEquals(tollerance = 0.01D)
-	private double doubleF;
-	@ArrayEquals(ignoreDuplicate = false)
-	private String[] stringAF;
-	private double[] doubleAF;
 
-	public MainTest(int a, String b, double c, String[] d, double[] e) {
-		this.intF = a;
-		this.stringF = b;
-		this.doubleF = c;
-		this.stringAF = d;
-		this.doubleAF = e;
+	private SimpleObj so1;
+	
+	private SimpleObj so2;
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
 	}
 
-	public static void main(String[] args) throws IllegalArgumentException,
-			IllegalAccessException {
-		MainTest anno1 = new MainTest(12, "qqq", 1.2D, new String[] { "a",
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		so1 = new SimpleObj(12, "qqq", 1.2D, new String[] { "a",
 				"ar", "asd" }, new double[] { 1.0D, 1.1D });
-		MainTest anno2 = new MainTest(11, "qqqa", 1.21D, new String[] { "a",
+		
+		so2 = new SimpleObj(11, "qqqa", 1.21D, new String[] { "a",
 				"as", "asd" }, new double[] { 1.0D, 1.2D });
+	}
 
-		System.out.println(anno1);
-		System.out.println(anno2);
+	@After
+	public void tearDown() throws Exception {
+	}
 
+	@Test
+	public void test() throws IllegalArgumentException, IllegalAccessException {
+		System.out.println("State1, obj1: " + so1);
+		System.out.println("State1, obj2: " + so2 + "\n");
+		
+		assertFalse(so1.equals(so2));
+		
 		Main main = new Main();
-		main.compareAndSync(anno1, anno2, true);
+		assertFalse(main.compareAndSync(so1, so2, false));
+		
+		assertFalse(so1.equals(so2));
+		
+		assertFalse(main.compareAndSync(so1, so2, true));
+		
+		System.out.println("\nState2, obj1: " + so1);
+		System.out.println("State2, obj2: " + so2 + "\n");
+		
+		assertTrue(so1.equals(so2));
 
-		System.out.println("");
-		System.out.println(anno1);
-		System.out.println(anno2);
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder("TestAnno=[");
-
-		sb.append("intF=").append(this.intF).append(",");
-		sb.append("stringF=").append(this.stringF).append(",");
-		sb.append("doubleF=").append(this.doubleF).append(",");
-		sb.append("stringAF={").append(Arrays.toString(this.stringAF))
-				.append("}");
-
-		sb.append("]");
-
-		return sb.toString();
-	}
 }
