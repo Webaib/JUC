@@ -5,7 +5,7 @@ import static net.overscale.juc.Utils.*;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import net.overscale.juc.annotations.ArrayEquals;
+import net.overscale.juc.annotations.StriclyArrayEquals;
 import net.overscale.juc.annotations.FuzzyEquals;
 import net.overscale.juc.annotations.StrictlyEquals;
 
@@ -22,7 +22,7 @@ public class Main {
 				res &= checkStrictlyEquals(src, trg, f, sync);
 			} else if (f.getAnnotation(FuzzyEquals.class) != null) {
 				res &= checkFuzzyEquals(src, trg, f, sync);
-			} else if (f.getAnnotation(ArrayEquals.class) != null) {
+			} else if (f.getAnnotation(StriclyArrayEquals.class) != null) {
 				if (f.get(src) instanceof double[]) {
 					double[] srcVal = (double[]) f.get(src);
 					double[] trgVal = (double[]) f.get(trg);
@@ -44,7 +44,7 @@ public class Main {
 	private boolean checkArrayEquals(Object src, Object trg, double[] srcVal,
 			double[] trgVal, Field f, boolean sync)
 			throws IllegalArgumentException, IllegalAccessException {
-		ArrayEquals ae = (ArrayEquals) f.getAnnotation(ArrayEquals.class);
+		StriclyArrayEquals ae = (StriclyArrayEquals) f.getAnnotation(StriclyArrayEquals.class);
 		if (!Arrays.equals(srcVal, trgVal)) {
 			if (sync) {
 				if (ae.deepCopy()) {
@@ -69,7 +69,7 @@ public class Main {
 	private boolean checkArrayEquals(Object src, Object trg, Object[] srcVal,
 			Object[] trgVal, Field f, boolean sync)
 			throws IllegalAccessException {
-		ArrayEquals ae = (ArrayEquals) f.getAnnotation(ArrayEquals.class);
+		StriclyArrayEquals ae = (StriclyArrayEquals) f.getAnnotation(StriclyArrayEquals.class);
 		if (!Arrays.equals(srcVal, trgVal)) {
 			if (sync) {
 				if (ae.deepCopy()) {

@@ -6,7 +6,9 @@ import java.lang.annotation.Target;
 
 @Target({ java.lang.annotation.ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FuzzyEquals {
+public @interface FuzzyArrayEquals {
 	
 	double tolerance();
+
+	boolean deepCopy();
 }

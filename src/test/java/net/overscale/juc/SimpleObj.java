@@ -5,7 +5,7 @@ import static net.overscale.juc.Utils.fuzzyEquals;
 
 import java.util.Arrays;
 
-import net.overscale.juc.annotations.ArrayEquals;
+import net.overscale.juc.annotations.StriclyArrayEquals;
 import net.overscale.juc.annotations.FuzzyEquals;
 import net.overscale.juc.annotations.StrictlyEquals;
 
@@ -22,10 +22,10 @@ public class SimpleObj {
 	@FuzzyEquals(tolerance = TOLERANCE)
 	private double doubleF;
 
-	@ArrayEquals(deepCopy = false)
+	@StriclyArrayEquals(deepCopy = false)
 	private String[] stringAF;
 
-	@ArrayEquals(deepCopy = false)
+	@StriclyArrayEquals(deepCopy = false)
 	private double[] doubleAF;
 
 	public SimpleObj(int a, String b, double c, String[] d, double[] e) {
