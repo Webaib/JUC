@@ -14,7 +14,7 @@ import org.junit.Test;
 public class MainTest {
 
 	private SimpleObj so1;
-	
+
 	private SimpleObj so2;
 
 	@BeforeClass
@@ -27,11 +27,11 @@ public class MainTest {
 
 	@Before
 	public void setUp() throws Exception {
-		so1 = new SimpleObj(12, "qqq", 1.2D, new String[] { "a",
-				"ar", "asd" }, new double[] { 1.0D, 1.1D });
-		
-		so2 = new SimpleObj(11, "qqqa", 1.21D, new String[] { "a",
-				"as", "asd" }, new double[] { 1.0D, 1.2D });
+		so1 = new SimpleObj(12, "qqq", 1.2D, new String[] { "a", "ar", "asd" },
+				new double[] { 1.0D, 1.1D });
+
+		so2 = new SimpleObj(11, "qqqa", 1.21D,
+				new String[] { "a", "as", "asd" }, new double[] { 1.0D, 1.2D });
 	}
 
 	@After
@@ -42,18 +42,18 @@ public class MainTest {
 	public void test() throws IllegalArgumentException, IllegalAccessException {
 		System.out.println("State1, obj1: " + so1);
 		System.out.println("State1, obj2: " + so2 + "\n");
-		
+
 		assertFalse(so1.equals(so2));
-		
+
 		assertFalse(Juc.compareAndSync(so1, so2, false));
-		
+
 		assertFalse(so1.equals(so2));
-		
+
 		assertFalse(Juc.compareAndSync(so1, so2, true));
-		
+
 		System.out.println("\nState2, obj1: " + so1);
 		System.out.println("State2, obj2: " + so2 + "\n");
-		
+
 		assertTrue(so1.equals(so2));
 
 	}
