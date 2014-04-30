@@ -1,4 +1,4 @@
-package net.overscale.juc;
+package net.overscale.juc.test.res;
 
 import static net.overscale.juc.Utils.areStringsNullsOrEquals;
 import static net.overscale.juc.Utils.fuzzyEquals;

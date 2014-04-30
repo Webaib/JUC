@@ -1,7 +1,9 @@
-package net.overscale.juc;
+package net.overscale.juc.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import net.overscale.juc.Juc;
+import net.overscale.juc.test.res.SimpleObj;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,12 +45,11 @@ public class MainTest {
 		
 		assertFalse(so1.equals(so2));
 		
-		Main main = new Main();
-		assertFalse(main.compareAndSync(so1, so2, false));
+		assertFalse(Juc.compareAndSync(so1, so2, false));
 		
 		assertFalse(so1.equals(so2));
 		
-		assertFalse(main.compareAndSync(so1, so2, true));
+		assertFalse(Juc.compareAndSync(so1, so2, true));
 		
 		System.out.println("\nState2, obj1: " + so1);
 		System.out.println("State2, obj2: " + so2 + "\n");
