@@ -6,7 +6,7 @@ import java.lang.annotation.Target;
 
 @Target({ java.lang.annotation.ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface StriclyArrayEquals {
+public @interface StriclyIterableEquals {
 	
 	boolean deepCopy();
 }

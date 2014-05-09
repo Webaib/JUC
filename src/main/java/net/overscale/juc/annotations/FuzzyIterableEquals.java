@@ -6,7 +6,7 @@ import java.lang.annotation.Target;
 
 @Target({ java.lang.annotation.ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FuzzyArrayEquals {
+public @interface FuzzyIterableEquals {
 	
 	double tolerance();
 

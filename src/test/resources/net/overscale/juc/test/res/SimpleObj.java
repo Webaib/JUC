@@ -5,7 +5,7 @@ import static net.overscale.juc.Utils.fuzzyEquals;
 
 import java.util.Arrays;
 
-import net.overscale.juc.annotations.StriclyArrayEquals;
+import net.overscale.juc.annotations.StriclyIterableEquals;
 import net.overscale.juc.annotations.FuzzyEquals;
 import net.overscale.juc.annotations.StrictlyEquals;
 
@@ -22,10 +22,10 @@ public class SimpleObj {
 	@FuzzyEquals(tolerance = TOLERANCE)
 	private double doubleF;
 
-	@StriclyArrayEquals(deepCopy = false)
+	@StriclyIterableEquals(deepCopy = false)
 	private String[] stringAF;
 
-	@StriclyArrayEquals(deepCopy = false)
+	@StriclyIterableEquals(deepCopy = false)
 	private double[] doubleAF;
 
 	public SimpleObj(int a, String b, double c, String[] d, double[] e) {
@@ -73,4 +73,6 @@ public class SimpleObj {
 	public int hashCode() {
 		throw new IllegalStateException("HashCode not implemented yet.");
 	}
+	
+	
 }

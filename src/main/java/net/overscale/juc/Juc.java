@@ -5,21 +5,11 @@ import static net.overscale.juc.Utils.*;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import net.overscale.juc.annotations.StriclyArrayEquals;
+import net.overscale.juc.annotations.StriclyIterableEquals;
 import net.overscale.juc.annotations.FuzzyEquals;
 import net.overscale.juc.annotations.StrictlyEquals;
 
 public class Juc {
-
-	public static boolean compare(Object src, Object trg)
-			throws IllegalArgumentException, IllegalAccessException {
-		return compareAndSync(src, trg, false);
-	}
-	
-	public static void sync(Object src, Object trg)
-			throws IllegalArgumentException, IllegalAccessException {
-		compareAndSync(src, trg, true);
-	}
 
 	public static boolean compareAndSync(Object src, Object trg, boolean sync)
 			throws IllegalArgumentException, IllegalAccessException {
@@ -27,35 +17,51 @@ public class Juc {
 
 		Field[] fields = src.getClass().getDeclaredFields();
 		for (Field f : fields) {
-			f.setAccessible(true);
-			if (f.getAnnotation(StrictlyEquals.class) != null) {
-				res &= checkStrictlyEquals(src, trg, f, sync);
-			} else if (f.getAnnotation(FuzzyEquals.class) != null) {
-				res &= checkFuzzyEquals(src, trg, f, sync);
-			} else if (f.getAnnotation(StriclyArrayEquals.class) != null) {
-				if (f.get(src) instanceof double[]) {
-					double[] srcVal = (double[]) f.get(src);
-					double[] trgVal = (double[]) f.get(trg);
-
-					res &= checkArrayEquals(src, trg, srcVal, trgVal, f, sync);
-				} else {
-					Object[] srcVal = (Object[]) f.get(src);
-					Object[] trgVal = (Object[]) f.get(trg);
-
-					res &= checkArrayEquals(src, trg, srcVal, trgVal, f, sync);
-				}
-			}
+			res &= processField(src, trg, sync, f);
 		}
 
 		return res;
+	}
+
+	private static boolean processField(Object src, Object trg, boolean sync,
+			Field f) throws IllegalAccessException {
+		f.setAccessible(true);
+		
+		if (f.getAnnotation(StrictlyEquals.class) != null) {
+			return checkStrictlyEquals(src, trg, f, sync);
+			
+		} else if (f.getAnnotation(FuzzyEquals.class) != null) {
+			return checkFuzzyEquals(src, trg, f, sync);
+			
+		} else if (f.getAnnotation(StriclyIterableEquals.class) != null) {
+			return checkIterableEquals(src, trg, f, sync);
+		}
+		
+		throw new IllegalStateException("Not yet implemented!");
+	}
+
+	// TODO split in two meth. (order preserved iterable and not)
+	private static boolean checkIterableEquals(Object src, Object trg, Field f,
+			boolean sync) throws IllegalAccessException {
+		if (f.get(src) instanceof double[]) {
+			double[] srcVal = (double[]) f.get(src);
+			double[] trgVal = (double[]) f.get(trg);
+
+			return checkArrayEquals(src, trg, srcVal, trgVal, f, sync);
+		} else {
+			Object[] srcVal = (Object[]) f.get(src);
+			Object[] trgVal = (Object[]) f.get(trg);
+
+			return checkArrayEquals(src, trg, srcVal, trgVal, f, sync);
+		}
 	}
 
 	// TODO fuzzy double/float arrays eq
 	private static boolean checkArrayEquals(Object src, Object trg,
 			double[] srcVal, double[] trgVal, Field f, boolean sync)
 			throws IllegalArgumentException, IllegalAccessException {
-		StriclyArrayEquals ae = (StriclyArrayEquals) f
-				.getAnnotation(StriclyArrayEquals.class);
+		StriclyIterableEquals ae = (StriclyIterableEquals) f
+				.getAnnotation(StriclyIterableEquals.class);
 		if (!Arrays.equals(srcVal, trgVal)) {
 			if (sync) {
 				if (ae.deepCopy()) {
@@ -80,8 +86,8 @@ public class Juc {
 	private static boolean checkArrayEquals(Object src, Object trg,
 			Object[] srcVal, Object[] trgVal, Field f, boolean sync)
 			throws IllegalAccessException {
-		StriclyArrayEquals ae = (StriclyArrayEquals) f
-				.getAnnotation(StriclyArrayEquals.class);
+		StriclyIterableEquals ae = (StriclyIterableEquals) f
+				.getAnnotation(StriclyIterableEquals.class);
 		if (!Arrays.equals(srcVal, trgVal)) {
 			if (sync) {
 				if (ae.deepCopy()) {
@@ -155,8 +161,10 @@ public class Juc {
 						"%s was updated. Old value: %s, new value: %s",
 						new Object[] { f, trgFieldVal, srcFieldVal }));
 			}
+			
 			return false;
 		}
+		
 		return true;
 	}
 
