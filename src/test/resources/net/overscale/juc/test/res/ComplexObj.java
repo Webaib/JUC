@@ -20,17 +20,17 @@ public class ComplexObj {
 	@FuzzyEquals(tolerance = TOLERANCE)
 	private double anotherDoubleF;
 
-	@StriclyIterableEquals(deepCopy = false)
+	@StriclyIterableEquals(deepCopy = false, preserveOrder = true)
 	private SimpleObj[] complObjAF;
 
-	@StriclyIterableEquals(deepCopy = false)
+	@StriclyIterableEquals(deepCopy = false, preserveOrder = true)
 	private List<SimpleObj> complObjColF;
 
 	public ComplexObj(String b, double c, SimpleObj[] d, List<SimpleObj> e) {
 		this.anotherStringF = b;
 		this.anotherDoubleF = c;
-		this.complObjAF = d;
-		this.complObjColF = e;
+		this.complObjAF 	= d;
+		this.complObjColF	= e;
 	}
 
 	@Override

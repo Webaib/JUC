@@ -29,11 +29,11 @@ public class SimpleObj {
 	private double[] doubleAF;
 
 	public SimpleObj(int a, String b, double c, String[] d, double[] e) {
-		this.intF = a;
-		this.stringF = b;
-		this.doubleF = c;
-		this.stringAF = d;
-		this.doubleAF = e;
+		this.intF 		= a;
+		this.stringF 	= b;
+		this.doubleF 	= c;
+		this.stringAF 	= d;
+		this.doubleAF 	= e;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import static net.overscale.juc.Utils.*;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+import net.overscale.juc.annotations.FuzzyIterableEquals;
 import net.overscale.juc.annotations.StriclyIterableEquals;
 import net.overscale.juc.annotations.FuzzyEquals;
 import net.overscale.juc.annotations.StrictlyEquals;
@@ -34,14 +35,22 @@ public class Juc {
 			return checkFuzzyEquals(src, trg, f, sync);
 			
 		} else if (f.getAnnotation(StriclyIterableEquals.class) != null) {
-			return checkIterableEquals(src, trg, f, sync);
+			return checkStriclyIterableEquals(src, trg, f, sync);
+		} else if (f.getAnnotation(FuzzyIterableEquals.class) != null) {
+			return checkFuzzyStriclyIterableEquals(src, trg, f, sync);
 		}
 		
 		throw new IllegalStateException("Not yet implemented!");
 	}
 
+	private static boolean checkFuzzyStriclyIterableEquals(Object src,
+			Object trg, Field f, boolean sync) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	// TODO split in two meth. (order preserved iterable and not)
-	private static boolean checkIterableEquals(Object src, Object trg, Field f,
+	private static boolean checkStriclyIterableEquals(Object src, Object trg, Field f,
 			boolean sync) throws IllegalAccessException {
 		if (f.get(src) instanceof double[]) {
 			double[] srcVal = (double[]) f.get(src);
